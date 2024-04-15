@@ -9,6 +9,9 @@ interface props {
 }
 
 const SlideComponent = ({courses}: props) => {
+    
+    
+    
     return (
         <>
             <div>
