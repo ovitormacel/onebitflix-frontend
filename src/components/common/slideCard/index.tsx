@@ -11,7 +11,7 @@ const SlideCard = ({ course }: props) => {
             <div className={styles.slide}>
                 <img className={styles.slideImg} src={`${process.env.NEXT_PUBLIC_BASEURL}/${course.thumbnailUrl}`} alt={course.name} />
                 <p className={styles.slideTitle}>{course.name}</p>
-                <p className={styles.slideDescription}>{course.synopsis}</p> 
+                <p className={styles.slideDescription}>{course.synopsis}</p>
             </div>
         </>
     )
