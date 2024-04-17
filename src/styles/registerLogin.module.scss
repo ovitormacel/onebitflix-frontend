@@ -16,3 +16,26 @@
     border: 1px solid $darkGray;
     margin: 0 auto;
 }
+
+.input {
+    background-color: transparent;
+    border-color: $darkGray;
+    color: $lightGray;
+    
+    &::placeholder {
+        color: $darkGray;
+    }
+
+    &:focus {
+        background-color: transparent;
+        border-color: $lightRed;
+        color: $lightGray;
+        outline: none;
+    }
+}
+
+@media (max-width: 768px){
+    .form{
+        width: 100%;
+    }
+}

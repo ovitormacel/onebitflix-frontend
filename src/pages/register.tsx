@@ -3,10 +3,16 @@ import styles from "../styles/registerLogin.module.scss";
 import Head from "next/head";
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
 import Footer from "@/components/common/footer";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import authService from "@/services/authService";
+import { useRouter } from "next/router";
+import ToastComponent from "@/components/common/toast";
 
 const Register = () => {
+
+    const router = useRouter();
+    const [toastIsOpen, setToastIsOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
     
     const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -25,16 +31,29 @@ const Register = () => {
         }
 
         if(params.password !== confirmPassword){
-            alert("As senhas são diferentes");
+            setToastIsOpen(true);
+            
+            setTimeout(() => {
+                setToastIsOpen(false)
+            }, 1000 * 3);
+
+            setToastMessage("As senhas são diferentes.");
+
             return;
         }
 
         const {data, status} = await authService.register(params);
 
         if (status === 201){
-            alert("Registrado com sucesso!");
+            router.push("/login?registred=true");
         } else {
-            alert(data.message);
+            setToastIsOpen(true);
+            
+            setTimeout(() => {
+                setToastIsOpen(false)
+            }, 1000 * 3);
+
+            setToastMessage(data.message);
         }
     }
 
@@ -58,7 +77,7 @@ const Register = () => {
                         <FormGroup>
                             <Label for="firstName" className={styles.label}>Nome</Label>
                             <Input 
-                                className={styles.inputName} 
+                                className={styles.input} 
                                 id="firstName" 
                                 name="firstName" 
                                 type="text" 
@@ -71,7 +90,7 @@ const Register = () => {
                         <FormGroup>
                             <Label for="lastName" className={styles.label}>Sobrenome</Label>
                             <Input 
-                                className={styles.inputName} 
+                                className={styles.input} 
                                 id="lastName" 
                                 name="lastName" 
                                 type="text" 
@@ -146,21 +165,17 @@ const Register = () => {
                                 required
                             />
                         </FormGroup>
-
-                        <FormGroup>
-                            <Input 
-                                className={styles.input} 
-                                type="submit" 
-                                value="Registrar"
-                                required
-                            />
-                        </FormGroup>
+                        
+                        <Button className={styles.inputBtn} outline type="submit">Criar Conta</Button>
                     
                     </Form>
                 
                 </Container>
 
                 <Footer />
+
+                {/* TOAST */}
+                <ToastComponent color="bg-danger" isOpen={toastIsOpen} message={toastMessage} />
             </main>
         </>
     )
