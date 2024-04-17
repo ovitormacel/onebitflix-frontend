@@ -14,6 +14,15 @@ const login = () => {
     const [toastIsOpen, setToastIsOpen] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
 
+    // Verifica se o usuário já está logado.
+    useEffect(() => {
+        if(sessionStorage.getItem("onebitflix-token")){
+            router.push("/home");
+        }
+    }, [])
+
+    
+    // Abre e configura o Toast.
     const openToast = (message: string, color: string) => {
         setToastIsOpen(true);
             
@@ -24,7 +33,7 @@ const login = () => {
         setToastMessage(message);
 
         setToastColor(color);
-    } 
+    }
 
     useEffect(() => {
         const registerSuccess = router.query.registred;
@@ -35,24 +44,25 @@ const login = () => {
     }, [router.query]);
 
 
-const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    // Handler do Formulário.    
+    const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+        const formData = new FormData(event.currentTarget);
 
-    const params = {
-        email: formData.get("email")!.toString(),
-        password: formData.get("password")!.toString(),
+        const params = {
+            email: formData.get("email")!.toString(),
+            password: formData.get("password")!.toString(),
+        }
+
+        const {status} = await authService.login(params);
+
+        if(status == 200) {
+            router.push("/home");
+        } else {
+            openToast("E-mail ou senha incorretos.", "bg-danger");
+        }
     }
-
-    const {status} = await authService.login(params);
-
-    if(status == 200) {
-        router.push("/home");
-    } else {
-        openToast("E-mail ou senha incorretos.", "bg-danger");
-    }
-}
 
     return (
         <>

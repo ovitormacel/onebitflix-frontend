@@ -3,17 +3,24 @@ import styles from "../styles/registerLogin.module.scss";
 import Head from "next/head";
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
 import Footer from "@/components/common/footer";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import authService from "@/services/authService";
 import { useRouter } from "next/router";
 import ToastComponent from "@/components/common/toast";
 
 const Register = () => {
-
     const router = useRouter();
     const [toastIsOpen, setToastIsOpen] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
     
+    // Verifica se o usuário já está logado.
+    useEffect(() => {
+        if(sessionStorage.getItem("onebitflix-token")){
+            router.push("/home");
+        }
+    }, [])
+
+    // Handler do Formulário.
     const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
