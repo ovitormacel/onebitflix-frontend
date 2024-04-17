@@ -1,4 +1,4 @@
-import HeaderAuth from "@/components/common/headerAuth";
+import FeaturedSection from "@/components/homeAuth/featuredSection";
 import Head from "next/head"
 
 const HomeAuth = () => {
@@ -10,7 +10,7 @@ const HomeAuth = () => {
             </Head>
 
             <main>
-                <HeaderAuth />
+                <FeaturedSection />
             </main>
         </>
     )
