@@ -16,7 +16,6 @@
     gap: 10px;
     width: 80%;
     margin: 20px auto;
-    // text-transform: uppercase;
 }
 .nameAbbreviation {
     font-size: 40px;
@@ -65,7 +64,6 @@
     background-color: transparent;
     border: 1px solid $darkGray;
     color: white;
-    text-transform: uppercase;
 
     &::placeholder {
         color: $lightGray;

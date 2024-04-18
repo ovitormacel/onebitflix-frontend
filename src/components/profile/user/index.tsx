@@ -1,13 +1,75 @@
 import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import styles from "../../../styles/profile.module.scss";
+import { FormEvent, useEffect, useState } from "react";
+import profileService from "@/services/profileService";
+import ToastComponent from "@/components/common/toast";
 
 const UserForm = () => {
+
+    const [toastIsOpen, setToastIsOpen] = useState(false);
+    const [toastConfig, setToastConfig] = useState({
+        color: "",
+        message: ""
+    });
+
+    const [formInputs, setFormInputs] = useState({
+        firstName: "",
+        lastName: "",
+        phone: "",
+        email: "",
+        created_at: ""
+    });
+
+    useEffect(() => {
+        profileService.fetchCurrent().then((user) => {
+            const userInfos = {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                phone: user.phone,
+                email: user.email,
+                created_at: user.createdAt
+            }
+
+            setFormInputs(userInfos);
+        })
+    }, [])
+
+    const handleUserUpdate = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const res = await profileService.updateProfile(formInputs);
+    
+        if(res === 200){
+            setToastConfig({
+                color: "bg-success",
+                message: "Alterações Salvas"
+            })
+            setToastIsOpen(true);
+
+            setTimeout(() => {
+                setToastIsOpen(false);
+            }, 1000 * 3);
+        } else {
+            setToastConfig({
+                color: "bg-danger",
+                message: "Alterações não autorizadas!"
+            })
+            setToastIsOpen(true);
+
+            setTimeout(() => {
+                setToastIsOpen(false);
+            }, 1000 * 3);
+        }
+    }
+    
     return (
         <>
-            <Form className={styles.form}>
+            <Form className={styles.form} onSubmit={handleUserUpdate}>
                 <div className={styles.formName}>
-                    <p className={styles.nameAbbreviation}>NT</p>
-                    <p className={styles.username}>Name Test</p>
+                    <p className={styles.nameAbbreviation}>
+                        {formInputs.firstName.slice(0, 1)}{formInputs.lastName.slice(0, 1)}
+                    </p>
+                    <p className={styles.username}>{`${formInputs.firstName} ${formInputs.lastName}`}</p>
                 </div>
 
                 <div className={styles.memberTime}>
@@ -28,7 +90,12 @@ const UserForm = () => {
                             required
                             maxLength={20}
                             className={styles.inputFlex}
-                            value={"Name"}
+                            value={formInputs.firstName}
+                            onChange={(event) => {
+                                const updatedInputs = {...formInputs};
+                                updatedInputs.firstName = event.target.value
+                                setFormInputs(updatedInputs);
+                            }}
                         />
                     </FormGroup>
 
@@ -42,7 +109,12 @@ const UserForm = () => {
                             required
                             maxLength={20}
                             className={styles.inputFlex}
-                            value={"Test"}
+                            value={formInputs.lastName}
+                            onChange={(event) => {
+                                const updatedInputs = {...formInputs};
+                                updatedInputs.lastName = event.target.value
+                                setFormInputs(updatedInputs);
+                            }}
                         />
                     </FormGroup>
                 </div>
@@ -57,7 +129,12 @@ const UserForm = () => {
                             placeholder="(xx) xxxxx-xxxx"
                             required
                             className={styles.input}
-                            value={"+55 (11) 98787-8787"}
+                            value={formInputs.phone}
+                            onChange={(event) => {
+                                const updatedInputs = {...formInputs};
+                                updatedInputs.phone = event.target.value
+                                setFormInputs(updatedInputs);
+                            }}
                         />
                     </FormGroup>
 
@@ -70,13 +147,20 @@ const UserForm = () => {
                             placeholder="Digite seu e-mail"
                             required
                             className={styles.input}
-                            value={"test@email.com"}
+                            value={formInputs.email}
+                            onChange={(event) => {
+                                const updatedInputs = {...formInputs};
+                                updatedInputs.email = event.target.value
+                                setFormInputs(updatedInputs);
+                            }}
                         />
                     </FormGroup>
 
                     <Button className={styles.formBtn} outline type="submit">Salvar Alterações</Button>
                 </div>
             </Form>
+
+            <ToastComponent color={toastConfig.color} isOpen={toastIsOpen} message={toastConfig.message} />
         </>
     )
 }
