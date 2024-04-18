@@ -21,7 +21,6 @@ export type CourseType = {
 const courseService = {
     getNewestCourse: async () => {
         const res = await api.get("/courses/newest").catch((error) => {
-            console.log(error.response.data.message)
             return error.response;
         });
 
@@ -36,8 +35,49 @@ const courseService = {
                 Authorization: `Bearer ${token}`
             }
         }).catch((error) => {
-            console.log(error.response.data.message);
+            return error.response;
+        })
 
+        return res;
+    },
+
+    addToFav: async (courseId: number | string) => {
+        const token = sessionStorage.getItem("onebitflix-token");
+
+        const res = await api.post("/favorites", {courseId}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).catch(error => {
+            return error.response;
+        });
+
+        return res;
+    },
+
+    removeToFav: async (courseId: number | string) => {
+        const token = sessionStorage.getItem("onebitflix-token");
+
+        const res = await api.delete("/favorites", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            data: { courseId }
+        }).catch(error => {
+            return error.response;
+        })
+
+        return res;
+    },
+
+    getToFav: async () => {
+        const token = sessionStorage.getItem("onebitflix-token");
+
+        const res = await api.get("/favorites", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).catch(error => {
             return error.response;
         })
 
