@@ -3,8 +3,12 @@ import styles from "../../../styles/profile.module.scss";
 import { FormEvent, useEffect, useState } from "react";
 import profileService from "@/services/profileService";
 import ToastComponent from "@/components/common/toast";
+import { useRouter } from "next/router";
 
 const UserForm = () => {
+    const router = useRouter();
+
+    const [initialEmail, setInitialEmail] = useState("");
 
     const [toastIsOpen, setToastIsOpen] = useState(false);
     const [toastConfig, setToastConfig] = useState({
@@ -20,6 +24,9 @@ const UserForm = () => {
         created_at: ""
     });
 
+    const date = new Date(formInputs.created_at);
+    const month = date.toLocaleDateString("default", {month: "long"});
+
     useEffect(() => {
         profileService.fetchCurrent().then((user) => {
             const userInfos = {
@@ -31,6 +38,7 @@ const UserForm = () => {
             }
 
             setFormInputs(userInfos);
+            setInitialEmail(user.email);
         })
     }, [])
 
@@ -49,6 +57,11 @@ const UserForm = () => {
             setTimeout(() => {
                 setToastIsOpen(false);
             }, 1000 * 3);
+
+            if(initialEmail !== formInputs.email) {
+                sessionStorage.clear();
+                router.push("/");
+            }
         } else {
             setToastConfig({
                 color: "bg-danger",
@@ -74,7 +87,7 @@ const UserForm = () => {
 
                 <div className={styles.memberTime}>
                     <img className={styles.memberTimeImg} src="/profile/iconUserAccount.svg" alt="Icon User Account" />
-                    <p className={styles.memberTimeText}>Membro desde <br /> 12 de Fevereiro de 2024</p>
+                    <p className={styles.memberTimeText}>Membro desde <br />{`${date.getDate()} de ${month} de ${date.getFullYear()}`}</p>
                 </div>
 
                 <hr />
